@@ -3,9 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "leaflet": "^1.4.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.0"
+    "react-leaflet": "^2.2.1",
+    "react-leaflet-control": "^2.1.1",
+    "react-leaflet-draggable-polyline": "^1.0.3",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "3.0.0",
+    "reactstrap": "^8.0.0",
+    "axios": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -27,5 +34,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-leaflet-polyline": "latest"
   }
 }

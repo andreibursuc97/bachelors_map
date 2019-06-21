@@ -3,16 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.0.2",
+    "axios": "latest",
     "leaflet": "^1.4.0",
+    "luxon": "^1.16.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-inline-grid": "^0.5.3",
     "react-leaflet": "^2.2.1",
     "react-leaflet-control": "^2.1.1",
     "react-leaflet-draggable-polyline": "^1.0.3",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.0",
+    "react-sticky": "^6.0.3",
+    "react-sticky-el": "^1.0.20",
     "reactstrap": "^8.0.0",
-    "axios": "latest"
+    "universal-cookie": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

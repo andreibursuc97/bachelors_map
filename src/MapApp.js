@@ -24,7 +24,10 @@ class MapApp extends Component {
         position: [46.769496, 23.588628],
         zoom: 15,
         isLoading: false,
-        input: this.item
+        input: this.item,
+        offset: '10%',
+        endOffset: '60%',
+        repeat: '10%'
     };
     constructor(props) {
         super(props);
@@ -91,7 +94,7 @@ class MapApp extends Component {
                 { gpsPoints.map( gpsPoint =>
                 <Marker key={gpsPoint.id} position={[gpsPoint.latitude, gpsPoint.longitude]}>
                     <Popup>
-                        {gpsPoint.latitude}, {gpsPoint.longitude} <br/> {gpsPoint.street}
+                        {gpsPoint.latitude}, {gpsPoint.longitude} <br/> {new Date(parseInt(gpsPoint.date,10)).toString('MM/dd/yy HH:mm:ss')} <br/> {gpsPoint.street}
                     </Popup>
                 </Marker>
                 )}

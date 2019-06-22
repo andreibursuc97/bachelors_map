@@ -17,7 +17,9 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import PinnedSubheaderValue from "./PinnedSubheaderValue";
+import whyDidYouUpdate from "why-did-you-update";
 
+// whyDidYouUpdate(React);
 class Details extends Component {
 
     // input = {
@@ -30,7 +32,8 @@ class Details extends Component {
         this.state = {
             name: null,
             id: null,
-            wayDetails: null,
+            ways: [],
+            intersections: [],
             isLoading: true,
             position: [[46.769496, 23.588628], [46.769496, 23.588628]],
             gpsPoints: [],
@@ -44,6 +47,7 @@ class Details extends Component {
 
         this.setState({isLoading: true});
         // let input = {...this.state.input};
+        console.log("getWayById")
         axios
             .get(`/updatedWay/${id}`)
             .then(response => {
@@ -60,7 +64,11 @@ class Details extends Component {
                     isLoading: false
                 })
             });
+
+
     }
+
+
 
     getNextWayById(id) {
 
@@ -94,53 +102,52 @@ class Details extends Component {
         axios
             .get(`/way/${id}`)
             .then(response => {
+                let wayDetails = response.data;
+                console.log("didMount")
+                if (wayDetails.id === null) {
+                    wayDetails.durationListPerHour = [];
+                    wayDetails.durationPerHour = [];
+                    wayDetails.intersectionMapWithTimeList = [];
+                }
+
+                let ways = [];
+                Object.entries(wayDetails.durationListPerHour).map((key, value) => {
+                        ways.push(key);
+                    }
+                );
+                //console.log(ways);
+                let intersections = [];
+                Object.entries(wayDetails.intersectionMapWithTimeList).map((key, value) => {
+                        intersections.push(key);
+                    }
+                );
                 this.setState({
-                    wayDetails: response.data,
+                    ways: ways,
+                    intersections: intersections,
                     isLoading: false
                 });
                 //this.getWayById(response.data[0].id)
             });
+
         // this.getWayById(id);
 
     }
 
 
     render() {
-        let {name, id, wayDetails, isLoading} = this.state;
 
+        let {name, id, ways, intersections, isLoading} = this.state;
         if (isLoading) {
+            console.log("Loading...")
             return <div id="app">
                 <div className="logo">
                     <img src={'load.gif'} alt={"loading"}/>
                 </div>
             </div>;
         }
-        //console.log(wayDetails);
-        if(wayDetails.id === null) {
-            wayDetails.durationListPerHour = []
-            wayDetails.intersectionMapWithTimeList = []
-        }
 
-        let ways = [];
-        Object.entries(wayDetails.durationListPerHour).map((key, value) => {
-                ways.push(key);
-            }
-        );
-        let waysAverage = [];
-        //console.log(wayDetails.durationPerHour);
-        Object.entries(wayDetails.durationPerHour).map(value => {
-            waysAverage.push(value);
-            }
-        );
-        //console.log(ways);
-        console.log(waysAverage);
-        let intersections = [];
-        Object.entries(wayDetails.intersectionMapWithTimeList).map((key, value) => {
-                intersections.push(key);
-            }
-        );
         //console.log(intersections);
-
+        const uuidv4 = require('uuid/v4');
         return <div>
 
             <Box ml={4} mt={2}>
@@ -183,7 +190,9 @@ class Details extends Component {
                                         </ExpansionPanelSummary>
                                         <ExpansionPanelDetails>
                                             <PinnedSubheaderList
+                                                key={uuidv4()}
                                                 hourList={way[1]}
+                                                id={id}
                                             />
                                         </ExpansionPanelDetails>
 
@@ -199,7 +208,9 @@ class Details extends Component {
                                             {intersections.map(value => {
                                                 if (value[0] === way[0]) {
                                                     return <PinnedSubheaderList
+                                                        key={uuidv4()}
                                                         hourList={value[1]}
+                                                        id={id}
                                                     />
                                                 }
                                             })}
@@ -221,6 +232,7 @@ class Details extends Component {
                                     gpsPoints={this.state.gpsPoints}
                                     nextGpsPoints={this.state.nextGpsPoints}
                                     position={this.state.position}
+                                    popUpPoints={[]}
                                 />
 
                             </Box>

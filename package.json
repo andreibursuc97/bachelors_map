@@ -18,7 +18,8 @@
     "react-sticky": "^6.0.3",
     "react-sticky-el": "^1.0.20",
     "reactstrap": "^8.0.0",
-    "universal-cookie": "^4.0.0"
+    "universal-cookie": "^4.0.0",
+    "why-did-you-update": "^1.0.6"
   },
   "scripts": {
     "start": "react-scripts start",

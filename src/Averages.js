@@ -263,6 +263,7 @@ class Averages extends Component {
                                     gpsPoints={this.state.gpsPoints}
                                     nextGpsPoints={this.state.nextGpsPoints}
                                     position={this.state.position}
+                                    popUpPoints={[]}
                                 />
 
                             </Box>

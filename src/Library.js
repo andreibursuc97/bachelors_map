@@ -27,7 +27,10 @@ class Library extends Component {
             isLoading: true,
             position: [[46.769496, 23.588628], [46.769496, 23.588628]],
             gpsPoints: [],
-            wayNodeReferenceData: []
+            popupPoints: [],
+            wayNodeReferenceData: [],
+            tags: {},
+            wayId: {}
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeId = this.handleChangeId.bind(this);
@@ -37,6 +40,7 @@ class Library extends Component {
         this.seeDetails = this.seeDetails.bind(this);
         this.seeAverages = this.seeAverages.bind(this);
         this.searchWayByName = this.searchWayByName.bind(this);
+        this.handleDbCLick = this.handleDbCLick.bind(this);
     }
 
     componentDidMount() {
@@ -91,6 +95,7 @@ class Library extends Component {
 
                 this.setState({
                     gpsPoints: coordinates,
+                    tags: response.data.tags,
                     isLoading: false
                 })
             });
@@ -129,6 +134,45 @@ class Library extends Component {
             });
     }
 
+    handleDbCLick(event) {
+        let lat = event.latlng.lat;
+        let lng = event.latlng.lng;
+        console.log(lat);
+        console.log(lng);
+        let popupPoints = this.state;
+        if (popupPoints.length > 0) {
+            popupPoints = [];
+        }
+        let popupPoint = {};
+        popupPoint.latitude = lat;
+        popupPoint.longitude = lng;
+        popupPoints = [popupPoint];
+        this.setState({popupPoints: popupPoints});
+        console.log(popupPoint);
+        axios
+            .get(`/nearestWay?lat=${lat}&lng=${lng}`)
+            .then(response => {
+                    if (response.status === 200) {
+                        let coordinates = [];
+                        response.data.nodes.forEach(node => {
+                            coordinates.push([node.latitude, node.longitude])
+                        });
+                        //let coordinates = response.data.map(gpsPoint => new L.LatLng(gpsPoint.x, gpsPoint.y));
+
+                        console.log(coordinates);
+
+                        this.setState({
+                            gpsPoints: coordinates,
+                            tags: response.data.tags,
+                            wayId: response.data.id,
+                            isLoading: false
+                        })
+                    }
+
+                }
+            );
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
         this.setState({isLoading: true});
@@ -155,7 +199,7 @@ class Library extends Component {
             </div>;
         }
 
-        return <div >
+        return <div>
             <Box ml={20} mr={2} mt={4} mb={2}>
                 <Grid container spacing={48}>
                     <Grid item xs={4}>
@@ -210,8 +254,9 @@ class Library extends Component {
                                         />
 
                                     </Box>
-                                    <Button variant="contained" color={"primary"} type="submit">Searching</Button>
-
+                                    <Button variant="contained" color={"primary"} type="submit">Searching</Button>{' '}
+                                    <Button variant="contained" color="primary" onClick={() => this.seeDetails(this.state.input.id,"")}>Details</Button>{' '}
+                                    <Button variant="contained" color="primary" onClick={() => this.seeAverages(this.state.input.id,"")}>Averages</Button>
                                 </FormGroup>
                             </Form>
                         </Container>
@@ -224,6 +269,10 @@ class Library extends Component {
                                     gpsPoints={this.state.gpsPoints}
                                     nextGpsPoints={[]}
                                     position={this.state.position}
+                                    popUpPoints={this.state.popupPoints}
+                                    handleDbClick={this.handleDbCLick}
+                                    tags={this.state.tags}
+                                    wayId={this.state.wayId}
                                 />
                             </Box>
                         </Sticky>

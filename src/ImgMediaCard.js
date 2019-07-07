@@ -37,9 +37,9 @@ export default function ImgMediaCard(props) {
                 </CardContent>
             {/*</CardActionArea>*/}
             <CardActions>
-                <Button size="small" color="primary" onClick={() => props.seeDetails(props.id, props.name)}>
-                    See details
-                </Button>
+                {/*<Button size="small" color="primary" onClick={() => props.seeDetails(props.id, props.name)}>*/}
+                {/*    See details*/}
+                {/*</Button>*/}
                 <Button size="small" color="primary" onClick={() => props.seeAverages(props.id, props.name)}>
                     See averages
                 </Button>

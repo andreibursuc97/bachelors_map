@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles({
     card: {
@@ -16,7 +17,6 @@ const useStyles = makeStyles({
 
 export default function IdMediaCard(props) {
     const classes = useStyles();
-
     return (
         <Card className={classes.card} style={{flex: 1}} width={"100%"} margin={"10px"}>
             {/*<CardActionArea onClick={() => props.getWayById(props.id)}>*/}
@@ -42,6 +42,9 @@ export default function IdMediaCard(props) {
                 {/*</Button>*/}
                 <Button size="small" color="primary" onClick={() => props.getWayById(props.id)}>
                     On map
+                </Button>
+                <Button size="small" color="primary" onClick={() => props.seeWayDetails(props.id)}>
+                    Details
                 </Button>
                 {/*<Button size="small" color="primary">*/}
                 {/*    Learn More*/}

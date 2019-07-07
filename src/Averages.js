@@ -23,10 +23,9 @@ class Averages extends Component {
     // input = {
     //     name: null
     // };
-
+    childDiv = {};
     constructor(props) {
         super(props);
-
         this.state = {
             name: null,
             id: null,
@@ -34,18 +33,24 @@ class Averages extends Component {
             isLoading: true,
             position: [[46.769496, 23.588628], [46.769496, 23.588628]],
             gpsPoints: [],
-            nextGpsPoints: []
+            nextGpsPoints: [],
         };
+        //console.log(localStorage);
+
         this.getWayById = this.getWayById.bind(this);
         this.getNextWayById = this.getNextWayById.bind(this);
+        this.seeWayDetails = this.seeWayDetails.bind(this);
+        this.myRef = React.createRef();
+
     }
 
     getWayById(id) {
 
         this.setState({isLoading: true});
+        localStorage.setItem('scrollPosition',window.scrollY);
         // let input = {...this.state.input};
         axios
-            .get(`/updatedWay/${id}`)
+            .get(`/wayLineString/${id}`)
             .then(response => {
                 let coordinates = [];
                 response.data.forEach(point => {
@@ -65,9 +70,10 @@ class Averages extends Component {
     getNextWayById(id) {
 
         this.setState({isLoading: true});
+        localStorage.setItem('scrollPosition',window.scrollY);
         // let input = {...this.state.input};
         axios
-            .get(`/updatedWay/${id}`)
+            .get(`/wayLineString/${id}`)
             .then(response => {
                 let coordinates = [];
                 response.data.forEach(point => {
@@ -84,8 +90,19 @@ class Averages extends Component {
             });
     }
 
-    componentDidMount() {
+    seeWayDetails(id) {
+        localStorage.setItem('scrollPosition',window.scrollY);
+        let url='/details/'+id;
+        console.log(url)
+        this.props.history.push(url);
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
 
+        window.scrollTo(0, localStorage.getItem('scrollPosition'));
+
+    }
+
+    componentDidMount() {
         const cookies = new Cookies();
         const name = cookies.get('street_name');
         const id = cookies.get('way_id');
@@ -94,8 +111,14 @@ class Averages extends Component {
         axios
             .get(`/way/${id}`)
             .then(response => {
+                let coordinates = [];
+                response.data.gpsPoints.map(point => {
+                    console.log(point)
+                    coordinates.push([point.latitude, point.longitude])
+                });
                 this.setState({
                     wayDetails: response.data,
+                    gpsPoints:coordinates,
                     isLoading: false
                 });
                 //this.getWayById(response.data[0].id)
@@ -107,7 +130,6 @@ class Averages extends Component {
 
     render() {
         let {name, id, wayDetails, isLoading} = this.state;
-
         if (isLoading) {
             return <div id="app">
                 <div className="logo">
@@ -135,7 +157,7 @@ class Averages extends Component {
         );
         //console.log(intersections);
 
-        return <div>
+        return <div ref={this.myRef}>
 
             <Box ml={4} mt={2}>
 
@@ -165,6 +187,7 @@ class Averages extends Component {
                                         <IdMediaCard
                                             id={way[0]}
                                             getWayById={this.getNextWayById}
+                                            seeWayDetails={this.seeWayDetails}
                                         />
 
                                     </Box>
@@ -204,53 +227,6 @@ class Averages extends Component {
                                     </ExpansionPanel>
                                 </Grid>
                             </Box>)}
-
-                    {/*    {ways.map(way =>*/}
-                    {/*        <Box m={2}>*/}
-                    {/*            <Grid item xs={30} md={12}>*/}
-                    {/*                <Box mb={2}>*/}
-
-                    {/*                    <IdMediaCard*/}
-                    {/*                        id={way[0]}*/}
-                    {/*                        getWayById={this.getNextWayById}*/}
-                    {/*                    />*/}
-
-                    {/*                </Box>*/}
-                    {/*                <ExpansionPanel>*/}
-                    {/*                    <ExpansionPanelSummary*/}
-                    {/*                        aria-controls="panel2a-content"*/}
-                    {/*                        id="panel2a-header"*/}
-                    {/*                    >*/}
-                    {/*                        <Typography>Segment time</Typography>*/}
-                    {/*                    </ExpansionPanelSummary>*/}
-                    {/*                    <ExpansionPanelDetails>*/}
-                    {/*                        <PinnedSubheaderList*/}
-                    {/*                            hourList={way[1]}*/}
-                    {/*                        />*/}
-                    {/*                    </ExpansionPanelDetails>*/}
-
-                    {/*                </ExpansionPanel>*/}
-                    {/*                <ExpansionPanel>*/}
-                    {/*                    <ExpansionPanelSummary*/}
-                    {/*                        aria-controls="panel2a-content"*/}
-                    {/*                        id="panel2a-header"*/}
-                    {/*                    >*/}
-                    {/*                        <Typography>Intersection time</Typography>*/}
-                    {/*                    </ExpansionPanelSummary>*/}
-                    {/*                    <ExpansionPanelDetails>*/}
-                    {/*                        {intersections.map(value => {*/}
-                    {/*                            if (value[0] === way[0]) {*/}
-                    {/*                                return <PinnedSubheaderList*/}
-                    {/*                                    hourList={value[1]}*/}
-                    {/*                                />*/}
-                    {/*                            }*/}
-                    {/*                        })}*/}
-                    {/*                    </ExpansionPanelDetails>*/}
-
-                    {/*                </ExpansionPanel>*/}
-                    {/*            </Grid>*/}
-                    {/*        </Box>)}*/}
-
                     </Grid>
 
 
@@ -269,41 +245,6 @@ class Averages extends Component {
                             </Box>
                         </Sticky>
                     </Grid>
-
-                    {/*<Grid container item xs={4} spacing={2}>*/}
-
-
-                    {/*    {intersections.map(intersection =>*/}
-                    {/*        <Box m={2}>*/}
-                    {/*            <Grid item xs={30} md={12}>*/}
-                    {/*                <Box mb={2}>*/}
-
-                    {/*                    <IdMediaCard*/}
-                    {/*                        id={intersection[0]}*/}
-                    {/*                        getWayById={this.getWayById}*/}
-                    {/*                    />*/}
-
-                    {/*                </Box>*/}
-                    {/*                <ExpansionPanel>*/}
-                    {/*                    <ExpansionPanelSummary*/}
-                    {/*                        aria-controls="panel2a-content"*/}
-                    {/*                        id="panel2a-header"*/}
-                    {/*                    >*/}
-                    {/*                        <Typography>Intersection time</Typography>*/}
-                    {/*                    </ExpansionPanelSummary>*/}
-                    {/*                    <ExpansionPanelDetails>*/}
-                    {/*                        <PinnedSubheaderList*/}
-                    {/*                            hourList={intersection[1]}*/}
-                    {/*                        />*/}
-                    {/*                    </ExpansionPanelDetails>*/}
-
-                    {/*                </ExpansionPanel>*/}
-                    {/*            </Grid>*/}
-                    {/*        </Box>)}*/}
-
-                    {/*</Grid>*/}
-
-
                 </Grid>
 
 

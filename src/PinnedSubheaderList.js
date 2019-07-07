@@ -32,18 +32,17 @@ class PinnedSubheaderList extends Component {
             },
         }));
         this.state={
-            useStyles: useStyles,
-            hourList: props.hourList
+            useStyles: useStyles
         }
 
 
     }
 
-    componentDidMount() {
-        console.log("didMount");
-        this.setState({hourList: this.props.hourList})
-    }
-
+//     componentDidMount() {
+//         console.log("didMount");
+//         this.setState({hourList: this.props.hourList})
+//     }
+//
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         if(this.props.id !== nextProps.id) {
             console.log("shouldUpdate");
@@ -60,7 +59,7 @@ class PinnedSubheaderList extends Component {
         const uuidv4 = require('uuid/v4');
         return (
             <List className={classes.root} subheader={<li/>}>
-                {Object.entries(this.state.hourList).map(([hour, valueList]) => (
+                {Object.entries(this.props.hourList).map(([hour, valueList]) => (
                     <li key={`section-${hour}-${uuidv4()}`} className={classes.listSection}>
                         <ul className={classes.ul}>
                             <ListSubheader>{`Time values at ${hour}`}</ListSubheader>

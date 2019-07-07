@@ -27,7 +27,8 @@ class MapApp extends Component {
         input: this.item,
         offset: '10%',
         endOffset: '60%',
-        repeat: '10%'
+        repeat: '10%',
+        way: []
     };
     constructor(props) {
         super(props);
@@ -40,6 +41,22 @@ class MapApp extends Component {
         const position = [this.state.lat, this.state.lng];
         const position2 = [51.510, -0.09];
         this.setState({markers: [position, position2]});
+        axios
+            .get(`/wayLineString/302299785`)
+            .then(response => {
+                let coordinates = [];
+                response.data.forEach(point => {
+                    coordinates.push([point.x, point.y])
+                });
+                let way = coordinates;
+                //let coordinates = response.data.map(gpsPoint => new L.LatLng(gpsPoint.x, gpsPoint.y));
+                console.log(coordinates);
+                console.log(this.state.isLoading)
+                this.setState({
+                    way: way,
+                    isLoading: false
+                })
+            });
     }
 
     handleChange(event) {
@@ -69,7 +86,7 @@ class MapApp extends Component {
     }
 
     render() {
-        const {gpsPoints, markers, isLoading,position} = this.state;
+        const {gpsPoints, markers, isLoading,position,way} = this.state;
 
         // let lat = gpsPoints[0].latitude;
         // let lng = gpsPoints[0].longitude;
@@ -93,11 +110,13 @@ class MapApp extends Component {
                 {/*<Polyline color={'red'} positions={markers}/>*/}
                 { gpsPoints.map( gpsPoint =>
                 <Marker key={gpsPoint.id} position={[gpsPoint.latitude, gpsPoint.longitude]}>
-                    <Popup>
-                        {gpsPoint.latitude}, {gpsPoint.longitude} <br/> {new Date(parseInt(gpsPoint.date,10)).toString('MM/dd/yy HH:mm:ss')} <br/> {gpsPoint.street}
+                    <Popup key={gpsPoint.id} closeOnClick={"false"} autoClose={"false"}>
+                        {gpsPoint.latitude}, {gpsPoint.longitude} <br/> {new Date(parseInt(gpsPoint.date,10)).toString('MM/dd/yy HH:mm:ss')} <br/>
                     </Popup>
                 </Marker>
                 )}
+                <Polyline color={'red'}
+                          positions={way}/>
                 <Control position="topleft" >
                     <Form onSubmit={this.handleSubmit}>
                         <FormGroup>

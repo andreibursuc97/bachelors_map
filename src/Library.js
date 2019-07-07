@@ -37,10 +37,14 @@ class Library extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleSubmitId = this.handleSubmitId.bind(this);
         this.getWayById = this.getWayById.bind(this);
-        this.seeDetails = this.seeDetails.bind(this);
         this.seeAverages = this.seeAverages.bind(this);
         this.searchWayByName = this.searchWayByName.bind(this);
         this.handleDbCLick = this.handleDbCLick.bind(this);
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+
+        window.scrollTo(0, localStorage.getItem('scrollPosition'));
+
     }
 
     componentDidMount() {
@@ -81,9 +85,10 @@ class Library extends Component {
     getWayById(id) {
 
         this.setState({isLoading: true});
+        localStorage.setItem('scrollPosition',window.scrollY);
         // let input = {...this.state.input};
         axios
-            .get(`/updatedWay/${id}`)
+            .get(`/wayLineString/${id}`)
             .then(response => {
                 let coordinates = [];
                 response.data.forEach(point => {
@@ -101,16 +106,8 @@ class Library extends Component {
             });
     }
 
-    seeDetails(id, name) {
-
-        const cookies = new Cookies();
-        cookies.set("street_name", name);
-        cookies.set("way_id", id);
-        this.props.history.push(`/details`);
-    }
-
     seeAverages(id, name) {
-
+        localStorage.setItem('scrollPosition',window.scrollY);
         const cookies = new Cookies();
         cookies.set("street_name", name);
         cookies.set("way_id", id);
@@ -120,7 +117,7 @@ class Library extends Component {
     searchWayByName(name) {
 
         axios
-            .get(`/updatedWay?name=${name}`)
+            .get(`/wayDetails?name=${name}`)
             .then(response => {
                 this.setState({
                     wayNodeReferenceData: response.data,
@@ -235,7 +232,7 @@ class Library extends Component {
                                             id={way.id}
                                             name={way.tags.name}
                                             getWayById={this.getWayById}
-                                            seeDetails={this.seeDetails}
+                                            // seeDetails={this.seeDetails}
                                             seeAverages={this.seeAverages}
                                         />
                                     )}
@@ -255,7 +252,6 @@ class Library extends Component {
 
                                     </Box>
                                     <Button variant="contained" color={"primary"} type="submit">Searching</Button>{' '}
-                                    <Button variant="contained" color="primary" onClick={() => this.seeDetails(this.state.input.id,"")}>Details</Button>{' '}
                                     <Button variant="contained" color="primary" onClick={() => this.seeAverages(this.state.input.id,"")}>Averages</Button>
                                 </FormGroup>
                             </Form>
